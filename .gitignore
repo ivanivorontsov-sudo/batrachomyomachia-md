@@ -1,0 +1,7 @@
+out/
+shots/
+res/resources.h
+tests/test_rules
+tests/gen_script
+*.ppm
+*.wav.tmp

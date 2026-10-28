@@ -1,0 +1,20 @@
+perft EN d1 = 7 (ref 7)
+perft EN d2 = 49 (ref 49)
+perft EN d3 = 302 (ref 302)
+perft EN d4 = 1469 (ref 1469)
+perft EN d5 = 7361 (ref 7361)
+perft EN d6 = 36768 (ref 36768)
+perft EN d7 = 179740 (ref 179740)
+perft EN d8 = 845931 (ref 845931)
+perft RU d1 = 7
+perft RU d2 = 49
+perft RU d3 = 302
+perft RU d4 = 1469
+perft RU d5 = 7482
+perft RU d6 = 37986
+perft RU d7 = 190146
+self-play 24 games: mice 11, frogs 8, draws 5
+hard vs easy (20 games): hard wins 20, draws 0, losses 0
+
+6606 checks, 0 failures
+exit 0
