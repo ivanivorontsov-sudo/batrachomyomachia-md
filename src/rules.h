@@ -29,5 +29,8 @@ int  sq_row(int sq);
 int  sq_col(int sq);
 int  rc_to_sq(int row, int col);                     /* -1 if light square */
 int  popcount32(bb_t x);
+int  pos_same(const Pos *a, const Pos *b);          /* same pieces and side to move */
+/* threefold repetition: hist[0..n-1] = positions before each move, cur = current */
+int  is_threefold(const Pos *hist, int n, const Pos *cur);
 #define BIT(s) (((bb_t)1)<<(s))
 #endif

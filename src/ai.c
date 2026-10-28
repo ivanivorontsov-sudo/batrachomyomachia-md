@@ -38,18 +38,17 @@ int ai_eval(const Pos *p,int rules){
     return diff;
 }
 
-#ifdef SGDK_GCC
-static Move stack[900];   /* 68000 has 64 KB of RAM */
-#else
-static Move stack[2600];
-#endif
+static Move stack[900];   /* 68000 has 64 KB of RAM; same size on the host so that games replay identically */
+/* deterministic thinking budget in nodes (not time): the host replays exactly what the console plays */
+static const rs32 node_budget[3]={150,500,1100};
+static rs32 budget_now;
 static int sp;
 
 static int order_key(const Move *m){ return m->ncapt*16 + m->promo*8; }
 
 static int search(const Pos *p,int rules,int depth,int alpha,int beta,int ply){
     ai_nodes++;
-    if((ai_nodes&127)==0 && ai_time_up()) stop_flag=1;
+    if((ai_nodes&127)==0 && (ai_nodes>budget_now || ai_time_up())) stop_flag=1;
     if(stop_flag) return 0;
     if(p->quiet>=60) return 0;
     if(sp+MAX_MOVES>=(int)(sizeof(stack)/sizeof(stack[0]))) return ai_eval(p,rules);
@@ -81,7 +80,7 @@ int ai_choose(const Pos *p,int rules,int level,const Move *moves,int n){
     static const int noise[3]={45,10,0};
     int order[MAX_MOVES]; int score[MAX_MOVES];
     for(int i=0;i<n;i++){ order[i]=i; score[i]=0; }
-    ai_time_start(level); stop_flag=0; ai_nodes=0; ai_depth_reached=0; sp=0;
+    ai_time_start(level); stop_flag=0; ai_nodes=0; budget_now=node_budget[level]; ai_depth_reached=0; sp=0;
     int bestidx=0;
     for(int d=1; d<=maxd[level]; d++){
         int alpha=-INF, cur_best=-1, cur_val=-INF;
@@ -102,7 +101,7 @@ int ai_choose(const Pos *p,int rules,int level,const Move *moves,int n){
         /* sort order by score desc for next iteration */
         for(int a=1;a<n;a++){ int t=order[a]; int j=a-1; while(j>=0 && score[order[j]]<score[t]){ order[j+1]=order[j]; j--; } order[j+1]=t; }
         if(cur_val>WIN-100 || cur_val<-WIN+100) break;
-        if(ai_time_up()) break;
+        if(ai_nodes>budget_now || ai_time_up()) break;
     }
     return bestidx;
 }

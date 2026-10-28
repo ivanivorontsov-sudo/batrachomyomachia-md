@@ -126,3 +126,15 @@ void make_move(Pos *p,const Move *m,int rules){
     if(m->capt || !king) p->quiet=0; else if(p->quiet<255) p->quiet++;
     p->side=(ru8)op; (void)rules;
 }
+
+int pos_same(const Pos *a,const Pos *b){
+    return a->side==b->side && a->men[0]==b->men[0] && a->men[1]==b->men[1] && a->kings[0]==b->kings[0] && a->kings[1]==b->kings[1];
+}
+int is_threefold(const Pos *hist,int n,const Pos *cur){
+    int cnt=1;
+    /* only positions after the last capture / man move can repeat */
+    for(int i=n-1, k=0; i>=0 && k<cur->quiet; i--, k++){
+        if(pos_same(&hist[i],cur) && ++cnt>=3) return 1;
+    }
+    return 0;
+}
